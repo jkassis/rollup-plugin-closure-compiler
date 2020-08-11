@@ -1,6 +1,6 @@
 {
-  "name": "@ampproject/rollup-plugin-closure-compiler",
-  "version": "0.26.0",
+  "name": "@jkassis/rollup-plugin-closure-compiler",
+  "version": "0.26.4",
   "description": "Rollup + Google Closure Compiler",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.mjs",
@@ -28,8 +28,8 @@
     "postcoverage": "sirv coverage/",
     "build": "rimraf dist transpile transpile-tests && tsc -p tsconfig.json & wait",
     "postbuild": "rollup -c",
-    "release": "np --no-2fa",
-    "prepublishOnly": "npm-run-all build"
+    "prepublishOnly": "npm-run-all build",
+    "release": "np --no-2fa"
   },
   "peerDependencies": {
     "rollup": ">=1.27"

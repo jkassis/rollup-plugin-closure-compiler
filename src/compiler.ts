@@ -15,10 +15,7 @@
  */
 
 import { compiler, CompileOptions } from 'google-closure-compiler';
-const {
-  getNativeImagePath,
-  getFirstSupportedPlatform,
-} = require('google-closure-compiler/lib/utils.js');
+const { getNativeImagePath } = require('google-closure-compiler/lib/utils.js');
 import { postCompilation } from './transformers/chunk/transforms';
 import { RenderedChunk } from 'rollup';
 import { ChunkTransform } from './transform';
@@ -28,7 +25,6 @@ enum Platform {
   JAVA = 'java',
   JAVASCRIPT = 'javascript',
 }
-const DEFAULT_PLATFORM_PRECEDENCE = [Platform.NATIVE, Platform.JAVA, Platform.JAVASCRIPT];
 
 /**
  * Splits user `platform` option from compiler options object
@@ -50,49 +46,41 @@ function filterContent(content: CompileOptions): [CompileOptions, Platform] {
 }
 
 /**
- * Reorders platform preferences based on configuration.
- * @param {String} platformPreference - preferred platform string
- * @return {Array}
- */
-function orderPlatforms(platformPreference: Platform | string): Array<Platform> {
-  if (platformPreference === '') {
-    return DEFAULT_PLATFORM_PRECEDENCE;
-  }
-
-  const index = DEFAULT_PLATFORM_PRECEDENCE.indexOf(platformPreference as Platform);
-  const newPlatformPreferences = DEFAULT_PLATFORM_PRECEDENCE.splice(index, 1);
-  return newPlatformPreferences.concat(DEFAULT_PLATFORM_PRECEDENCE);
-}
-
-/**
  * Run Closure Compiler and `postCompilation` Transforms on input source.
  * @param compileOptions Closure Compiler CompileOptions, normally derived from Rollup configuration
  * @param transforms Transforms to run rollowing compilation
  * @return Promise<string> source following compilation and Transforms.
  */
-export default function(
+export default function (
   compileOptions: CompileOptions,
   chunk: RenderedChunk,
   transforms: Array<ChunkTransform>,
 ): Promise<string> {
   return new Promise((resolve: (stdOut: string) => void, reject: (error: any) => void) => {
-    const [config, platform] = filterContent(compileOptions);
-    const instance = new compiler(config);
-    const firstSupportedPlatform = getFirstSupportedPlatform(orderPlatforms(platform));
+    var [config, platform] = filterContent(compileOptions);
+    if (!platform) platform = Platform.JAVASCRIPT;
 
-    if (firstSupportedPlatform !== Platform.JAVA) {
+    const instance = new compiler(config, [`--platform=${platform}`]);
+
+    // cleanup java params on instance
+    if (platform == Platform.JAVA) {
+      instance.javaPath = `${process.env.JAVA_HOME}/bin`;
+    } else {
       // TODO(KB): Provide feedback on this API. It's a little strange to nullify the JAR_PATH
       // and provide a fake java path.
+      instance.javaPath = '';
       instance.JAR_PATH = null;
+    }
+
+    if (platform == Platform.NATIVE) {
       instance.javaPath = getNativeImagePath();
     }
 
+    console.log(`rollup-plugin-closure-compiler.default: javaPath: ${instance.javaPath}`);
+    console.log(`rollup-plugin-closure-compiler.default: JAR_PATH: ${instance.JAR_PATH}`);
+
     instance.run(async (exitCode: number, code: string, stdErr: string) => {
-      if (
-        'warning_level' in compileOptions &&
-        compileOptions.warning_level === 'VERBOSE' &&
-        stdErr !== ''
-      ) {
+      if ('warning_level' in compileOptions && compileOptions.warning_level === 'VERBOSE' && stdErr !== '') {
         reject(new Error(`Google Closure Compiler ${stdErr}`));
       } else if (exitCode !== 0) {
         reject(new Error(`Google Closure Compiler exit ${exitCode}: ${stdErr}`));
