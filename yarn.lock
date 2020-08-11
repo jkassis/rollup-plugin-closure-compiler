@@ -406,6 +406,13 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/google-closure-compiler@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@types/google-closure-compiler/-/google-closure-compiler-0.0.18.tgz#fe233d02d9bf9c7af95c9e007f042fb7609b9ec4"
+  integrity sha1-/iM9Atm/nHr5XJ4AfwQvt2CbnsQ=
+  dependencies:
+    "@types/node" "*"
+
 "@types/is-windows@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/is-windows/-/is-windows-1.0.0.tgz#1011fa129d87091e2f6faf9042d6704cdf2e7be0"

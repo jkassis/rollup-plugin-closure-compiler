@@ -16,16 +16,9 @@
 
 //@ts-ignore
 const ClosureCompiler = require('google-closure-compiler').jsCompiler;
-const { getNativeImagePath } = require('google-closure-compiler/lib/utils.js');
 import { postCompilation } from './transformers/chunk/transforms';
 import { RenderedChunk } from 'rollup';
 import { ChunkTransform } from './transform';
-
-enum Platform {
-  NATIVE = 'native',
-  JAVA = 'java',
-  JAVASCRIPT = 'javascript',
-}
 
 /**
  * Run Closure Compiler and `postCompilation` Transforms on input source.
