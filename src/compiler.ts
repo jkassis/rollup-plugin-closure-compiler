@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { compiler, CompileOptions } from 'google-closure-compiler';
+//@ts-ignore
+const ClosureCompiler = require('google-closure-compiler').jsCompiler;
 const { getNativeImagePath } = require('google-closure-compiler/lib/utils.js');
 import { postCompilation } from './transformers/chunk/transforms';
 import { RenderedChunk } from 'rollup';
@@ -27,58 +28,19 @@ enum Platform {
 }
 
 /**
- * Splits user `platform` option from compiler options object
- * returns new object containing options and preferred platform.
- * @param {CompileOptions} content - compiler options object
- * @return {Object}
- * @example in rollup.config.js
- *  compiler({
- *    platform: 'javascript',
- *  }),
- */
-function filterContent(content: CompileOptions): [CompileOptions, Platform] {
-  let platform: string = '';
-  if ('platform' in content && typeof content.platform === 'string') {
-    platform = content.platform;
-    delete content.platform;
-  }
-  return [content, platform as Platform];
-}
-
-/**
  * Run Closure Compiler and `postCompilation` Transforms on input source.
  * @param compileOptions Closure Compiler CompileOptions, normally derived from Rollup configuration
  * @param transforms Transforms to run rollowing compilation
  * @return Promise<string> source following compilation and Transforms.
  */
 export default function (
-  compileOptions: CompileOptions,
+  compileOptions: any,
   chunk: RenderedChunk,
   transforms: Array<ChunkTransform>,
 ): Promise<string> {
   return new Promise((resolve: (stdOut: string) => void, reject: (error: any) => void) => {
-    var [config, platform] = filterContent(compileOptions);
-    if (!platform) platform = Platform.JAVASCRIPT;
-
-    const instance = new compiler(config, [`--platform=${platform}`]);
-
-    // cleanup java params on instance
-    if (platform == Platform.JAVA) {
-      instance.javaPath = `${process.env.JAVA_HOME}/bin`;
-    } else {
-      // TODO(KB): Provide feedback on this API. It's a little strange to nullify the JAR_PATH
-      // and provide a fake java path.
-      instance.javaPath = '';
-      instance.JAR_PATH = null;
-    }
-
-    if (platform == Platform.NATIVE) {
-      instance.javaPath = getNativeImagePath();
-    }
-
-    console.log(`rollup-plugin-closure-compiler.default: javaPath: ${instance.javaPath}`);
-    console.log(`rollup-plugin-closure-compiler.default: JAR_PATH: ${instance.JAR_PATH}`);
-
+    console.log(`ClosureCompiler.compileOptions: ${compileOptions}`);
+    const instance = new ClosureCompiler(compileOptions);
     instance.run(async (exitCode: number, code: string, stdErr: string) => {
       if ('warning_level' in compileOptions && compileOptions.warning_level === 'VERBOSE' && stdErr !== '') {
         reject(new Error(`Google Closure Compiler ${stdErr}`));
