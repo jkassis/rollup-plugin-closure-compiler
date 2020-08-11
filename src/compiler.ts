@@ -41,7 +41,7 @@ export default function (
         reject(new Error(`Google Closure Compiler exit ${exitCode}: ${stdErr}`));
       } else {
         const postCompiled = await postCompilation(code[0].src, chunk, transforms);
-        resolve(postCompiled.code);
+        resolve(postCompiled as any);
       }
     });
   });
