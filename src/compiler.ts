@@ -34,13 +34,13 @@ export default function (
   return new Promise((resolve: (stdOut: string) => void, reject: (error: any) => void) => {
     console.log(`ClosureCompiler.compileOptions: ${compileOptions}`);
     const instance = new ClosureCompiler(compileOptions);
-    instance.run(async (exitCode: number, code: string, stdErr: string) => {
+    instance.run(compileOptions.js, async (exitCode: number, code: any, stdErr: string) => {
       if ('warning_level' in compileOptions && compileOptions.warning_level === 'VERBOSE' && stdErr !== '') {
         reject(new Error(`Google Closure Compiler ${stdErr}`));
       } else if (exitCode !== 0) {
         reject(new Error(`Google Closure Compiler exit ${exitCode}: ${stdErr}`));
       } else {
-        const postCompiled = await postCompilation(code, chunk, transforms);
+        const postCompiled = await postCompilation(code[0].src, chunk, transforms);
         resolve(postCompiled.code);
       }
     });
