@@ -1,5 +1,5 @@
 {
-  "name": "@ampproject/rollup-plugin-closure-compiler",
+  "name": "@jkassis/rollup-plugin-closure-compiler",
   "version": "0.26.0",
   "description": "Rollup + Google Closure Compiler",
   "main": "dist/index.js",
