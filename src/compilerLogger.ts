@@ -29,7 +29,7 @@ declare interface Output {
 
 export function compilerLogOutput(
   output: Output,
-  inputFiles: Array<{ src: string; path: string }> = [],
+  inputFiles: Array<{ src: string; path: string; sourceMap: string }> = [],
   logger = console.warn,
 ) {
   // TODO(samthor): If this file has a sourceMap, then follow it back out of the rabbit hole.

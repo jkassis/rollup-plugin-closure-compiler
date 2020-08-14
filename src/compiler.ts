@@ -49,7 +49,7 @@ export default function (
           resolve(postCompiled as any);
         }
       });
-    } else if (compiler.toLowerCase() == 'cli') {
+    } else if (compiler.toLowerCase() == 'cmd') {
       const instance = new ClosureCompilerCMD(compileOptions);
 
       instance.run(async (exitCode: number, code: any, stdErr: string) => {

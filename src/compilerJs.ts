@@ -22,18 +22,19 @@ export class ClosureCompilerJS {
   }
 
   run(
-    fileList: Array<{ src: string; path: string; sourceMap: string }>,
+    // fileList: Array<{ src: string; path: string; sourceMap: string }>,
+    sourcePath: string,
     callback: (exitCode: number, stdOutData: string, stdErrData: string) => any,
   ): void {
     debugger;
-    const out = jscomp(this.compileOptions, fileList);
+    const out = jscomp(this.compileOptions, sourcePath);
     // GWT error and warnings are not true JS arrays, but are array-like.
     // Convert them to standard JS arrays.
     out.warnings = [].slice.call(out.warnings);
     out.errors = [].slice.call(out.errors);
     if (callback) {
       const errors: any[] = [];
-      compilerLogOutput(out, fileList, (logOutput) => {
+      compilerLogOutput(out, [{ src: '', path: sourcePath, sourceMap: '' }], (logOutput) => {
         // The logger uses terminal color markers which we don't want by default.
         errors.push(logOutput.replace(CONSOLE_COLOR_CHARS, ''));
       });
