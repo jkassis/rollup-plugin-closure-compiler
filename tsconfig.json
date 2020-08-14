@@ -19,6 +19,7 @@
     "module": "esnext",
     "allowSyntheticDefaultImports": true,
     "incremental": true,
+    "typeRoots": ["node_modules/@types"],
   },
   "include": [
     "./**/*.ts",
