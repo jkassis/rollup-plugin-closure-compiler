@@ -58,7 +58,7 @@ export default function (
         } else if (exitCode !== 0) {
           reject(new Error(`Google Closure Compiler exit ${exitCode}: ${stdErr}`));
         } else {
-          const postCompiled = await postCompilation(code[0].src, chunk, transforms);
+          const postCompiled = await postCompilation(code, chunk, transforms);
           resolve(postCompiled as any);
         }
       });
