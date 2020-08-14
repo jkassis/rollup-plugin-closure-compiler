@@ -46,7 +46,6 @@ export class ClosureCompilerCMD {
    * @return {child_process.ChildProcess}
    */
   run(callback: (exitCode: number, stdOutData: string, stdErrData: string) => any) {
-    debugger;
     if (this.extraCommandArgs) {
       this.commandArguments.unshift(...this.extraCommandArgs);
     }
@@ -75,7 +74,6 @@ export class ClosureCompilerCMD {
       }
 
       compileProcess.on('close', (code) => {
-        debugger;
         if (code !== 0) {
           stdErrData = this.prependFullCommand(stdErrData);
         }
@@ -84,7 +82,6 @@ export class ClosureCompilerCMD {
       });
 
       compileProcess.on('error', (err) => {
-        debugger;
         callback(1, stdOutData, this.prependFullCommand('Process spawn error. Is java in the path?\n' + err.message));
       });
     }

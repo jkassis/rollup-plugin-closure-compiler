@@ -26,7 +26,6 @@ export class ClosureCompilerJS {
     sourcePath: string,
     callback: (exitCode: number, stdOutData: string, stdErrData: string) => any,
   ): void {
-    debugger;
     const out = jscomp(this.compileOptions, sourcePath);
     // GWT error and warnings are not true JS arrays, but are array-like.
     // Convert them to standard JS arrays.

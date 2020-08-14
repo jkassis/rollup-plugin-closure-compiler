@@ -51,8 +51,8 @@ export default function (
       });
     } else if (compiler.toLowerCase() == 'cmd') {
       const instance = new ClosureCompilerCMD(compileOptions);
-
       instance.run(async (exitCode: number, code: any, stdErr: string) => {
+        debugger;
         if ('warning_level' in compileOptions && compileOptions.warning_level === 'VERBOSE' && stdErr !== '') {
           reject(new Error(`Google Closure Compiler ${stdErr}`));
         } else if (exitCode !== 0) {
